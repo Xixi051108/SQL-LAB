@@ -1,6 +1,7 @@
 import { config } from "./config.js";
 import { schemaDescription, targets } from "./fixtures.js";
 import { validateSQL } from "./judge.js";
+import { formatSQL } from "../shared/sql.js";
 export async function generateQuestion(type, requirement) {
   if (!config.deepseek.key)
     throw Object.assign(
@@ -58,7 +59,7 @@ export async function generateQuestion(type, requirement) {
       title: String(data.title).slice(0, 160),
       type,
       prompt: String(data.prompt).slice(0, 6000),
-      reference_sql: String(data.reference_sql),
+      reference_sql: formatSQL(String(data.reference_sql)),
       explanation: String(data.explanation).slice(0, 6000),
       target_table: data.target_table,
       ordered: data.ordered,

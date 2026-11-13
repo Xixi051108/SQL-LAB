@@ -1,4 +1,5 @@
 <script setup>
+import { formatSQL } from "../../shared/sql.js";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
 import {
@@ -185,6 +186,14 @@ function indent(event) {
     el.selectionStart = el.selectionEnd = start + 2;
   });
 }
+function prettify() {
+  const id = current.value.id;
+  const formatted = formatSQL(answers.value[id]);
+  if (formatted !== answers.value[id]) {
+    answers.value[id] = formatted;
+    revision.value++;
+  }
+}
 </script>
 <template>
   <div v-if="!attempt" class="empty-state">正在打开答题环境…</div>
@@ -260,7 +269,9 @@ function indent(event) {
         </div>
         <div class="editor-panel">
           <div class="editor-toolbar">
-            <span><Code2 :size="17" />answer.sql</span><small>MySQL 8.0</small>
+            <span><Code2 :size="17" />answer.sql</span>
+            <button class="format-button" :disabled="remaining <= 0 || submitting" @click="prettify">格式化</button>
+            <small>MySQL 8.0</small>
           </div>
           <div class="editor-body">
             <div class="line-numbers" aria-hidden="true">

@@ -1,4 +1,5 @@
 <script setup>
+import { formatSQL } from "../../shared/sql.js";
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import {
@@ -142,11 +143,11 @@ onUnmounted(() => clearInterval(timer));
         <div class="answer-comparison">
           <div>
             <h4>我的答案</h4>
-            <pre>{{ q.sql || "未作答" }}</pre>
+            <pre>{{ formatSQL(q.sql) || "未作答" }}</pre>
           </div>
           <div>
             <h4>参考答案</h4>
-            <pre>{{ q.reference_sql }}</pre>
+            <pre>{{ formatSQL(q.reference_sql) }}</pre>
           </div>
         </div>
         <div class="explanation">

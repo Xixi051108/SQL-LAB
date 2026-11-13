@@ -13,6 +13,7 @@ import {
 } from "lucide-vue-next";
 import { api, notify, labels, statuses } from "../state.js";
 import { useDialog } from "../dialog.js";
+import { formatSQL } from "../../shared/sql.js";
 const route = useRoute(),
   questions = ref([]),
   search = ref(""),
@@ -44,7 +45,9 @@ const blank = () => ({
   source: "manual",
 });
 function edit(q) {
-  form.value = q ? { ...q, ordered: Boolean(q.ordered) } : blank();
+  form.value = q
+    ? { ...q, reference_sql: formatSQL(q.reference_sql), ordered: Boolean(q.ordered) }
+    : blank();
   error.value = "";
   ai.value = "";
   editing.value = true;

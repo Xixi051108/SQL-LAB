@@ -1203,6 +1203,17 @@ summary {
 .editor-toolbar small {
   font-size: 11px;
 }
+.format-button {
+  margin-left: auto;
+  margin-right: 14px;
+  border: 1px solid #58728b;
+  border-radius: 5px;
+  background: transparent;
+  color: #c1d5e6;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.format-button:hover:not(:disabled) { background: #2b4863; }
 .editor-body {
   display: flex;
   min-height: 350px;

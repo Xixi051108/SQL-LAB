@@ -6,6 +6,7 @@ import { query, pool } from "../server/db.js";
 import { config } from "../server/config.js";
 import { grade } from "../server/judge.js";
 import { seedQuestions } from "../server/fixtures.js";
+import { formatSQL } from "../shared/sql.js";
 import { expireAttempts, processQueue, recoverQueue } from "../server/exams.js";
 let server, base;
 const users = [],
@@ -148,6 +149,11 @@ test("每次判题恢复初始环境", async () => {
     (await grade(seedQuestions[3], seedQuestions[3].reference_sql)).verdict,
     "correct",
   );
+});
+test("格式化后的查询与建表答案保持判题结果", async () => {
+  for (const question of [seedQuestions[0],seedQuestions[4]]) {
+    assert.equal((await grade(question,formatSQL(question.reference_sql))).verdict,"correct");
+  }
 });
 test("改表支持修改/删除列、增删主外键与唯一约束", async () => {
   for (const sql of [

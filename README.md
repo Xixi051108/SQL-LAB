@@ -7,7 +7,8 @@ Vue 3 + Express + MySQL 8.0，DeepSeek 辅助出题。面向数据库课程本�
 环境：Node.js 22.12+、MySQL 8.0。**无需 Docker**。
 
 ```powershell
-cd 'D:\靓仔\学习\DB\sql-exam'
+git clone https://github.com/Xixi051108/SQL-LAB.git
+cd SQL-LAB
 npm install
 node scripts/init-env.js
 # 在本机编辑 .env，填写 DB_USER、DB_PASSWORD、DEEPSEEK_API_KEY
@@ -68,6 +69,12 @@ node --env-file-if-exists=.env scripts/check-ui.js
 - `db/schema.sql`：六张核心业务表与会话表的建表 SQL。
 - `scripts/setup.js`：建库、受限授权、初始账号、七题验证及示例试卷初始化。
 - `docs/demo.md`：演示脚本、报告素材和限制说明。
+- [实验报告](docs/实验报告.docx)：14 页 Word 报告，含需求分析、转表、数据字典、前后端设计、实测结果与中文 E-R 图。
+- [测试用例表](docs/测试用例.xlsx)：60 条业务场景用例，可筛选和编辑，包含步骤、预期结果、实际结果与验证依据。
+- [报告在线版](docs/report.md)、[用例在线版](docs/cases.md)：便于在 GitHub 直接查看。
+- [教师端视频](demo/教师端.mp4)、[学生端视频](demo/学生端.mp4)：1080p 字幕版实操，无配音；内容与播放说明见 [视频说明](demo/说明.md)。
+
+报告封面的姓名、学号、班级、实验日期与分工需由小组据实填写。SQL 参考答案统一使用多行排版，学生编辑器提供“格式化”按钮。
 
 ## 常见问题
 

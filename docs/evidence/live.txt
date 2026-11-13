@@ -1,0 +1,130 @@
+
+> sql-exam@1.0.0 test:live
+> node --env-file-if-exists=.env --test --test-concurrency=1 tests/*.live.js
+
+TAP version 13
+# Subtest: 真实 MySQL 判题：select 正确及错误答案
+ok 1 - 真实 MySQL 判题：select 正确及错误答案
+  ---
+  duration_ms: 739.8528
+  type: 'test'
+  ...
+# Subtest: 真实 MySQL 判题：insert 正确及错误答案
+ok 2 - 真实 MySQL 判题：insert 正确及错误答案
+  ---
+  duration_ms: 765.3306
+  type: 'test'
+  ...
+# Subtest: 真实 MySQL 判题：update 正确及错误答案
+ok 3 - 真实 MySQL 判题：update 正确及错误答案
+  ---
+  duration_ms: 806.1532
+  type: 'test'
+  ...
+# Subtest: 真实 MySQL 判题：delete 正确及错误答案
+ok 4 - 真实 MySQL 判题：delete 正确及错误答案
+  ---
+  duration_ms: 755.2918
+  type: 'test'
+  ...
+# Subtest: 真实 MySQL 判题：create_table 正确及错误答案
+ok 5 - 真实 MySQL 判题：create_table 正确及错误答案
+  ---
+  duration_ms: 964.5457
+  type: 'test'
+  ...
+# Subtest: 真实 MySQL 判题：alter_table 正确及错误答案
+ok 6 - 真实 MySQL 判题：alter_table 正确及错误答案
+  ---
+  duration_ms: 1123.6707
+  type: 'test'
+  ...
+# Subtest: 真实 MySQL 判题：drop_table 正确及错误答案
+ok 7 - 真实 MySQL 判题：drop_table 正确及错误答案
+  ---
+  duration_ms: 769.3902
+  type: 'test'
+  ...
+# Subtest: 等价 SQL、别名和不同约束名称可通过
+ok 8 - 等价 SQL、别名和不同约束名称可通过
+  ---
+  duration_ms: 956.7127
+  type: 'test'
+  ...
+# Subtest: 真实 MySQL 比较重复行及排序
+ok 9 - 真实 MySQL 比较重复行及排序
+  ---
+  duration_ms: 472.491
+  type: 'test'
+  ...
+# Subtest: 每次判题恢复初始环境
+ok 10 - 每次判题恢复初始环境
+  ---
+  duration_ms: 1036.4903
+  type: 'test'
+  ...
+# Subtest: 格式化后的查询与建表答案保持判题结果
+ok 11 - 格式化后的查询与建表答案保持判题结果
+  ---
+  duration_ms: 1061.6498
+  type: 'test'
+  ...
+# Subtest: 改表支持修改/删除列、增删主外键与唯一约束
+ok 12 - 改表支持修改/删除列、增删主外键与唯一约束
+  ---
+  duration_ms: 3426.8698
+  type: 'test'
+  ...
+# Subtest: 判题账号不能读取业务库
+ok 13 - 判题账号不能读取业务库
+  ---
+  duration_ms: 2.5447
+  type: 'test'
+  ...
+# Subtest: 真实执行超时被终止，后续判题仍然可用
+ok 14 - 真实执行超时被终止，后续判题仍然可用
+  ---
+  duration_ms: 645.1306
+  type: 'test'
+  ...
+# Subtest: 流式结果上限保护
+ok 15 - 流式结果上限保护
+  ---
+  duration_ms: 245.1195
+  type: 'test'
+  ...
+# Subtest: 注册、权限、题库 CRUD、审核、快照及完整交卷计分
+ok 16 - 注册、权限、题库 CRUD、审核、快照及完整交卷计分
+  ---
+  duration_ms: 1242.9025
+  type: 'test'
+  ...
+# Subtest: 截止后拒绝写入，并按最后保存答案自动交卷
+ok 17 - 截止后拒绝写入，并按最后保存答案自动交卷
+  ---
+  duration_ms: 733.4318
+  type: 'test'
+  ...
+# 请求失败 POST /api/questions/generate Error
+# Subtest: DeepSeek 不可用时，已发布考试仍可提交并计分
+ok 18 - DeepSeek 不可用时，已发布考试仍可提交并计分
+  ---
+  duration_ms: 606.4171
+  type: 'test'
+  ...
+# 判题任务失败 26 Error
+# Subtest: 判题异常保留空成绩，教师可重试；恢复函数找回中断任务
+ok 19 - 判题异常保留空成绩，教师可重试；恢复函数找回中断任务
+  ---
+  duration_ms: 606.7063
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17484.4945
