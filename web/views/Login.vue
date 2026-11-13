@@ -44,26 +44,26 @@ async function submit() {
     </section>
     <section class="login-form-section">
       <div class="login-form">
-        <h2>{{ register ? "创建学生账号" : "欢迎回到实验台" }}</h2>
+        <h2>{{ register ? "注册账号" : "欢迎回到实验台" }}</h2>
         <p class="muted">
-          {{ register ? "填写信息，开启学习。" : "登录以继续。" }}
+          {{ register ? "使用名册中的编号和姓名。" : "使用学号或工号登录。" }}
         </p>
         <form @submit.prevent="submit">
           <label
-            >用户名<input
+            >学号/工号<input
               v-model.trim="form.username"
               autocomplete="username"
               required
               minlength="3"
               maxlength="32"
-              placeholder="输入用户名" /></label
+              placeholder="输入学号或工号" /></label
           ><label v-if="register"
             >姓名<input
               v-model.trim="form.name"
               autocomplete="name"
               required
               maxlength="40"
-              placeholder="输入你的姓名" /></label
+              placeholder="输入名册中的姓名" /></label
           ><label
             >密码<input
               v-model="form.password"
@@ -81,7 +81,7 @@ async function submit() {
           </button>
         </form>
         <p class="login-switch">
-          {{ register ? "已有账号？" : "还没有学生账号？"
+          {{ register ? "已有账号？" : "还没有账号？"
           }}<button
             class="text-button"
             @click="

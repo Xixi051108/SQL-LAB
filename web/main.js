@@ -8,6 +8,7 @@ import Exams from "./views/Exams.vue";
 import Workspace from "./views/Workspace.vue";
 import Result from "./views/Result.vue";
 import Results from "./views/Results.vue";
+import Roster from "./views/Roster.vue";
 import { api, state } from "./state.js";
 import "./style.css";
 const router = createRouter({
@@ -18,6 +19,7 @@ const router = createRouter({
     { path: "/questions", component: Questions, meta: { teacher: true } },
     { path: "/exams", component: Exams, meta: { teacher: true } },
     { path: "/results", component: Results, meta: { teacher: true } },
+    { path: "/roster", component: Roster, meta: { teacher: true } },
     { path: "/attempt/:id", component: Workspace },
     { path: "/result/:id", component: Result },
     { path: "/:pathMatch(.*)*", redirect: "/" },

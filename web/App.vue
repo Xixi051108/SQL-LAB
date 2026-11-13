@@ -8,6 +8,7 @@ import {
   CalendarClock,
   ChartNoAxesCombined,
   LogOut,
+  UsersRound,
 } from "lucide-vue-next";
 import { api, state, notify } from "./state.js";
 const route = useRoute(),
@@ -21,6 +22,7 @@ const nav = computed(() => [
   ...(state.user?.role === "teacher"
     ? [
         { path: "/questions", label: "题库管理", icon: Library },
+        { path: "/roster", label: "师生名册", icon: UsersRound },
         { path: "/exams", label: "考试管理", icon: CalendarClock },
         { path: "/results", label: "成绩记录", icon: ChartNoAxesCombined },
       ]

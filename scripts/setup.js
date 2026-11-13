@@ -5,6 +5,7 @@ import { pool, query } from "../server/db.js";
 import { hashPassword } from "../server/auth.js";
 import { seedQuestions } from "../server/fixtures.js";
 import { validateReference } from "../server/judge.js";
+import { migrateRoster } from "../server/roster.js";
 if (!config.judge.password)
   throw new Error(
     "缺少 JUDGE_PASSWORD；请运行 node scripts/init-env.js 并配置 .env",
@@ -62,20 +63,21 @@ try {
     );
   }
   console.log("数据库表和受限判题账号已就绪。");
-  let [teacher] = await query("SELECT id FROM users WHERE username='teacher'");
+  await migrateRoster(admin);
+  let [teacher] = await query("SELECT id FROM users WHERE username='T2026001'");
   if (!teacher) {
     const result = await query(
-      "INSERT INTO users(username,name,password_hash,role) VALUES('teacher','陈老师',?,'teacher')",
+      "INSERT INTO users(username,name,password_hash,role) VALUES('T2026001','陈明',?,'teacher')",
       [await hashPassword(process.env.TEACHER_PASSWORD || "Teacher123!")],
     );
     teacher = { id: result.insertId };
   }
   const [student] = await query(
-    "SELECT id FROM users WHERE username='student'",
+    "SELECT id FROM users WHERE username='2026001001'",
   );
   if (!student)
     await query(
-      "INSERT INTO users(username,name,password_hash,role) VALUES('student','林同学',?,'student')",
+      "INSERT INTO users(username,name,password_hash,role) VALUES('2026001001','王宁',?,'student')",
       [await hashPassword(process.env.STUDENT_PASSWORD || "Student123!")],
     );
   for (const q of seedQuestions) {
@@ -121,7 +123,7 @@ try {
       );
   }
   console.log(
-    "初始化完成。演示用户名 teacher / student，密码见本机 .env 中 TEACHER_PASSWORD / STUDENT_PASSWORD。",
+    "初始化完成。教师工号 T2026001、学生学号 2026001001，密码见本机 .env 中 TEACHER_PASSWORD / STUDENT_PASSWORD。",
   );
 } catch (e) {
   console.error("初始化失败：", e.code || e.message);

@@ -1213,7 +1213,9 @@ summary {
   padding: 4px 10px;
   font-size: 12px;
 }
-.format-button:hover:not(:disabled) { background: #2b4863; }
+.format-button:hover:not(:disabled) {
+  background: #2b4863;
+}
 .editor-body {
   display: flex;
   min-height: 350px;
@@ -2339,6 +2341,14 @@ td strong {
     font-size: 14px;
     width: max-content;
     max-width: calc(100vw - 30px);
+  }
+}
+@media (max-width: 720px) {
+  .sidebar nav {
+    overflow-x: auto;
+  }
+  .nav-link {
+    flex-shrink: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {

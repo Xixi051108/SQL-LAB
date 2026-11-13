@@ -6,125 +6,173 @@ TAP version 13
 # Subtest: 真实 MySQL 判题：select 正确及错误答案
 ok 1 - 真实 MySQL 判题：select 正确及错误答案
   ---
-  duration_ms: 739.8528
+  duration_ms: 1949.2108
   type: 'test'
   ...
 # Subtest: 真实 MySQL 判题：insert 正确及错误答案
 ok 2 - 真实 MySQL 判题：insert 正确及错误答案
   ---
-  duration_ms: 765.3306
+  duration_ms: 1984.6419
   type: 'test'
   ...
 # Subtest: 真实 MySQL 判题：update 正确及错误答案
 ok 3 - 真实 MySQL 判题：update 正确及错误答案
   ---
-  duration_ms: 806.1532
+  duration_ms: 2037.8155
   type: 'test'
   ...
 # Subtest: 真实 MySQL 判题：delete 正确及错误答案
 ok 4 - 真实 MySQL 判题：delete 正确及错误答案
   ---
-  duration_ms: 755.2918
+  duration_ms: 1886.2358
   type: 'test'
   ...
 # Subtest: 真实 MySQL 判题：create_table 正确及错误答案
 ok 5 - 真实 MySQL 判题：create_table 正确及错误答案
   ---
-  duration_ms: 964.5457
+  duration_ms: 2407.7353
   type: 'test'
   ...
 # Subtest: 真实 MySQL 判题：alter_table 正确及错误答案
 ok 6 - 真实 MySQL 判题：alter_table 正确及错误答案
   ---
-  duration_ms: 1123.6707
+  duration_ms: 2730.2927
   type: 'test'
   ...
 # Subtest: 真实 MySQL 判题：drop_table 正确及错误答案
 ok 7 - 真实 MySQL 判题：drop_table 正确及错误答案
   ---
-  duration_ms: 769.3902
+  duration_ms: 2160.3034
   type: 'test'
   ...
 # Subtest: 等价 SQL、别名和不同约束名称可通过
 ok 8 - 等价 SQL、别名和不同约束名称可通过
   ---
-  duration_ms: 956.7127
+  duration_ms: 2493.2379
   type: 'test'
   ...
 # Subtest: 真实 MySQL 比较重复行及排序
 ok 9 - 真实 MySQL 比较重复行及排序
   ---
-  duration_ms: 472.491
+  duration_ms: 1273.3189
   type: 'test'
   ...
 # Subtest: 每次判题恢复初始环境
 ok 10 - 每次判题恢复初始环境
   ---
-  duration_ms: 1036.4903
+  duration_ms: 2354.3299
   type: 'test'
   ...
 # Subtest: 格式化后的查询与建表答案保持判题结果
 ok 11 - 格式化后的查询与建表答案保持判题结果
   ---
-  duration_ms: 1061.6498
+  duration_ms: 2538.7432
   type: 'test'
   ...
 # Subtest: 改表支持修改/删除列、增删主外键与唯一约束
 ok 12 - 改表支持修改/删除列、增删主外键与唯一约束
   ---
-  duration_ms: 3426.8698
+  duration_ms: 8160.9909
   type: 'test'
   ...
 # Subtest: 判题账号不能读取业务库
 ok 13 - 判题账号不能读取业务库
   ---
-  duration_ms: 2.5447
+  duration_ms: 4.4241
   type: 'test'
   ...
 # Subtest: 真实执行超时被终止，后续判题仍然可用
 ok 14 - 真实执行超时被终止，后续判题仍然可用
   ---
-  duration_ms: 645.1306
+  duration_ms: 1610.229
   type: 'test'
   ...
 # Subtest: 流式结果上限保护
 ok 15 - 流式结果上限保护
   ---
-  duration_ms: 245.1195
+  duration_ms: 603.3941
   type: 'test'
   ...
 # Subtest: 注册、权限、题库 CRUD、审核、快照及完整交卷计分
 ok 16 - 注册、权限、题库 CRUD、审核、快照及完整交卷计分
   ---
-  duration_ms: 1242.9025
+  duration_ms: 2588.6632
   type: 'test'
   ...
 # Subtest: 截止后拒绝写入，并按最后保存答案自动交卷
 ok 17 - 截止后拒绝写入，并按最后保存答案自动交卷
   ---
-  duration_ms: 733.4318
+  duration_ms: 1335.4913
   type: 'test'
   ...
 # 请求失败 POST /api/questions/generate Error
 # Subtest: DeepSeek 不可用时，已发布考试仍可提交并计分
 ok 18 - DeepSeek 不可用时，已发布考试仍可提交并计分
   ---
-  duration_ms: 606.4171
+  duration_ms: 1236.322
   type: 'test'
   ...
-# 判题任务失败 26 Error
+# 判题任务失败 38 Error
 # Subtest: 判题异常保留空成绩，教师可重试；恢复函数找回中断任务
 ok 19 - 判题异常保留空成绩，教师可重试；恢复函数找回中断任务
   ---
-  duration_ms: 606.7063
+  duration_ms: 1264.0583
   type: 'test'
   ...
-1..19
-# tests 19
+# Subtest: 名册外编号及姓名不匹配均不得注册
+ok 20 - 名册外编号及姓名不匹配均不得注册
+  ---
+  duration_ms: 237.4645
+  type: 'test'
+  ...
+# Subtest: 学生身份来自名册，不能通过请求伪造教师身份
+ok 21 - 学生身份来自名册，不能通过请求伪造教师身份
+  ---
+  duration_ms: 159.7956
+  type: 'test'
+  ...
+# Subtest: 名单中的教师可注册，按工号登录并显示名册姓名
+ok 22 - 名单中的教师可注册，按工号登录并显示名册姓名
+  ---
+  duration_ms: 246.9232
+  type: 'test'
+  ...
+# Subtest: 停用未注册人员阻止注册，启用后可注册
+ok 23 - 停用未注册人员阻止注册，启用后可注册
+  ---
+  duration_ms: 244.3095
+  type: 'test'
+  ...
+# Subtest: 并发重复注册只创建一个账号
+ok 24 - 并发重复注册只创建一个账号
+  ---
+  duration_ms: 141.0769
+  type: 'test'
+  ...
+# Subtest: 已注册人员锁定编号身份，姓名更正同步展示
+ok 25 - 已注册人员锁定编号身份，姓名更正同步展示
+  ---
+  duration_ms: 261.949
+  type: 'test'
+  ...
+# Subtest: 停用已注册账号使会话和再次登录失效
+ok 26 - 停用已注册账号使会话和再次登录失效
+  ---
+  duration_ms: 219.1203
+  type: 'test'
+  ...
+# Subtest: 未注册名册可修改删除，编号唯一且不能停用自己
+ok 27 - 未注册名册可修改删除，编号唯一且不能停用自己
+  ---
+  duration_ms: 158.9796
+  type: 'test'
+  ...
+1..27
+# tests 27
 # suites 0
-# pass 19
+# pass 27
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 17484.4945
+# duration_ms 43499.2812

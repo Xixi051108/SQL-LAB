@@ -128,9 +128,10 @@ export function createApp() {
     await query("SELECT 1");
     res.json({ ok: true, server_time: new Date() });
   });
-  app.get("/api/auth/me", (req, res) =>
-    res.json({ user: req.session.user || null }),
-  );
+  app.get("/api/auth/me", async (req, res, next) => {
+    if (!req.session.user) return res.json({ user: null });
+    await loggedIn(req, res, () => res.json({ user: req.session.user }));
+  });
   async function loginSession(req, user) {
     await new Promise((resolve, reject) =>
       req.session.regenerate((e) => (e ? reject(e) : resolve())),
@@ -147,35 +148,50 @@ export function createApp() {
     return req.session.user;
   }
   app.post("/api/auth/register", async (req, res) => {
-    const username = text(req.body.username, "用户名", 32);
-    if (!/^[a-zA-Z0-9_]{3,32}$/.test(username))
-      throw fail("用户名应为 3–32 位字母、数字或下划线");
+    const username = text(req.body.username, "学号/工号", 32).toUpperCase();
+    if (!/^[A-Z0-9_-]{3,32}$/.test(username))
+      throw fail("学号/工号应为 3–32 位字母、数字、下划线或连字符");
     const name = text(req.body.name, "姓名", 40);
     const password = text(req.body.password, "密码", 128);
     if (password.length < 8) throw fail("密码至少 8 位");
-    const result = await query(
-      "INSERT INTO users(username,name,password_hash,role) VALUES(?,?,?,'student')",
-      [username, name, await hashPassword(password)],
-    );
-    res
-      .status(201)
-      .json({
-        user: await loginSession(req, {
-          id: result.insertId,
-          username,
-          name,
-          role: "student",
-        }),
-      });
+    const hash = await hashPassword(password);
+    const created = await transaction(async (cx) => {
+      const [entry] = await query(
+        "SELECT * FROM roster WHERE number=? FOR UPDATE",
+        [username],
+        cx,
+      );
+      if (!entry || !entry.enabled || entry.name !== name)
+        throw fail("学号/工号与姓名不匹配，或不在可注册名单中", 403);
+      const result = await query(
+        "INSERT INTO users(username,name,password_hash,role) VALUES(?,?,?,?)",
+        [entry.number, entry.name, hash, entry.role],
+        cx,
+      );
+      return {
+        id: result.insertId,
+        username: entry.number,
+        name: entry.name,
+        role: entry.role,
+      };
+    });
+    res.status(201).json({
+      user: await loginSession(req, created),
+    });
   });
   app.post("/api/auth/login", async (req, res) => {
-    const username = text(req.body.username, "用户名", 32),
+    const username = text(req.body.username, "学号/工号", 32).toUpperCase(),
       password = text(req.body.password, "密码", 128);
-    const [user] = await query("SELECT * FROM users WHERE username=?", [
-      username,
-    ]);
-    if (!user || !(await verifyPassword(password, user.password_hash)))
-      throw fail("用户名或密码错误", 401);
+    const [user] = await query(
+      "SELECT u.id,u.username,u.password_hash,r.name,r.role,r.enabled FROM users u JOIN roster r ON r.number=u.username WHERE u.username=?",
+      [username],
+    );
+    if (
+      !user ||
+      !user.enabled ||
+      !(await verifyPassword(password, user.password_hash))
+    )
+      throw fail("学号/工号或密码错误，或账号已停用", 401);
     res.json({ user: await loginSession(req, user) });
   });
   app.post("/api/auth/logout", loggedIn, async (req, res) => {
@@ -186,6 +202,82 @@ export function createApp() {
     res.json({ ok: true });
   });
   app.use("/api", loggedIn);
+  app.get("/api/roster", teacher, async (req, res) =>
+    res.json(
+      await query(
+        "SELECT r.*,u.id AS user_id FROM roster r LEFT JOIN users u ON u.username=r.number ORDER BY r.role,r.number",
+      ),
+    ),
+  );
+  function rosterInput(body) {
+    const number = text(body.number, "学号/工号", 32).toUpperCase();
+    if (
+      !/^[A-Z0-9_-]{3,32}$/.test(number) ||
+      !["teacher", "student"].includes(body.role) ||
+      typeof body.enabled !== "boolean"
+    )
+      throw fail("名册编号、身份或启用状态无效");
+    return {
+      number,
+      name: text(body.name, "姓名", 40),
+      role: body.role,
+      enabled: body.enabled,
+    };
+  }
+  app.post("/api/roster", teacher, async (req, res) => {
+    const r = rosterInput(req.body);
+    const result = await query(
+      "INSERT INTO roster(number,name,role,enabled) VALUES(?,?,?,?)",
+      [r.number, r.name, r.role, r.enabled],
+    );
+    res.status(201).json({ id: result.insertId });
+  });
+  app.put("/api/roster/:id", teacher, async (req, res) => {
+    const r = rosterInput(req.body);
+    await transaction(async (cx) => {
+      const [entry] = await query(
+        "SELECT * FROM roster WHERE id=? FOR UPDATE",
+        [id(req.params.id)],
+        cx,
+      );
+      if (!entry) throw fail("名单记录不存在", 404);
+      const [user] = await query(
+        "SELECT id FROM users WHERE username=?",
+        [entry.number],
+        cx,
+      );
+      if (user && (r.number !== entry.number || r.role !== entry.role))
+        throw fail("已注册人员的编号和身份不能修改", 409);
+      if (user?.id === req.session.user.id && !r.enabled)
+        throw fail("不能停用当前登录账号", 409);
+      await query(
+        "UPDATE roster SET number=?,name=?,role=?,enabled=? WHERE id=?",
+        [r.number, r.name, r.role, r.enabled, entry.id],
+        cx,
+      );
+      if (user) {
+        await query(
+          "UPDATE users SET name=? WHERE id=?",
+          [r.name, user.id],
+          cx,
+        );
+        await query(
+          "DELETE FROM sessions WHERE JSON_UNQUOTE(JSON_EXTRACT(data,'$.user.id'))=?",
+          [String(user.id)],
+          cx,
+        );
+      }
+    });
+    res.json({ ok: true });
+  });
+  app.delete("/api/roster/:id", teacher, async (req, res) => {
+    const r = await query(
+      "DELETE r FROM roster r LEFT JOIN users u ON u.username=r.number WHERE r.id=? AND u.id IS NULL",
+      [id(req.params.id)],
+    );
+    if (!r.affectedRows) throw fail("已注册人员不能删除，请改为停用", 409);
+    res.json({ ok: true });
+  });
   app.get("/api/schema", (req, res) =>
     res.json({ description: schemaDescription, types, targets }),
   );
@@ -531,15 +623,13 @@ export function createApp() {
             : 500);
     if (status >= 500)
       console.error("请求失败", req.method, req.path, error.code || error.name);
-    res
-      .status(status)
-      .json({
-        error: duplicate
-          ? "用户名或记录已经存在"
-          : status === 500
-            ? "服务暂时不可用，请检查数据库连接或联系教师"
-            : error.message,
-      });
+    res.status(status).json({
+      error: duplicate
+        ? "学号/工号或记录已经存在"
+        : status === 500
+          ? "服务暂时不可用，请检查数据库连接或联系教师"
+          : error.message,
+    });
   });
   return app;
 }

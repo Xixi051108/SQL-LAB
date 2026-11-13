@@ -1,0 +1,12 @@
+[
+  { "number": "T2026001", "name": "陈明", "role": "teacher" },
+  { "number": "T2026002", "name": "李华", "role": "teacher" },
+  { "number": "2026001001", "name": "王宁", "role": "student" },
+  { "number": "2026001002", "name": "陈雨", "role": "student" },
+  { "number": "2026001003", "name": "周宁", "role": "student" },
+  { "number": "2026001004", "name": "许禾", "role": "student" },
+  { "number": "2026001005", "name": "林晨", "role": "student" },
+  { "number": "2026001006", "name": "赵嘉", "role": "student" },
+  { "number": "2026001007", "name": "孙悦", "role": "student" },
+  { "number": "2026001008", "name": "吴轩", "role": "student" }
+]

@@ -6,103 +6,103 @@ TAP version 13
 # Subtest: 密码使用随机盐与 scrypt 验证
 ok 1 - 密码使用随机盐与 scrypt 验证
   ---
-  duration_ms: 159.8949
+  duration_ms: 173.1943
   type: 'test'
   ...
 # Subtest: 拒绝危险 SQL：SELECT * FROM sql_exam.users
 ok 2 - 拒绝危险 SQL：SELECT * FROM sql_exam.users
   ---
-  duration_ms: 4.7192
+  duration_ms: 5.3222
   type: 'test'
   ...
 # Subtest: 拒绝危险 SQL：SELECT * FROM mysql.user
 ok 3 - 拒绝危险 SQL：SELECT * FROM mysql.user
   ---
-  duration_ms: 0.5763
+  duration_ms: 0.5455
   type: 'test'
   ...
 # Subtest: 拒绝危险 SQL：SELECT * FROM students; DROP TABLE students
 ok 4 - 拒绝危险 SQL：SELECT * FROM students; DROP TABLE students
   ---
-  duration_ms: 1.0785
+  duration_ms: 1.1233
   type: 'test'
   ...
 # Subtest: 拒绝危险 SQL：SELECT SLEEP(5)
 ok 5 - 拒绝危险 SQL：SELECT SLEEP(5)
   ---
-  duration_ms: 0.0978
+  duration_ms: 0.1162
   type: 'test'
   ...
 # Subtest: 拒绝危险 SQL：SELECT LOAD_FILE('/tmp/x')
 ok 6 - 拒绝危险 SQL：SELECT LOAD_FILE('/tmp/x')
   ---
-  duration_ms: 0.0816
+  duration_ms: 0.0693
   type: 'test'
   ...
 # Subtest: 拒绝危险 SQL：SELECT @@version
 ok 7 - 拒绝危险 SQL：SELECT @@version
   ---
-  duration_ms: 0.146
+  duration_ms: 0.1197
   type: 'test'
   ...
 # Subtest: 拒绝危险 SQL：SELECT * FROM students /*! INTO OUTFILE 'x' */
 ok 8 - 拒绝危险 SQL：SELECT * FROM students /*! INTO OUTFILE 'x' */
   ---
-  duration_ms: 0.0727
+  duration_ms: 0.0622
   type: 'test'
   ...
 # Subtest: 拒绝危险 SQL：SELECT * FROM students FOR UPDATE
 ok 9 - 拒绝危险 SQL：SELECT * FROM students FOR UPDATE
   ---
-  duration_ms: 0.732
+  duration_ms: 0.6307
   type: 'test'
   ...
 # Subtest: 拒绝危险 SQL：SELECT REPEAT('x',1000000)
 ok 10 - 拒绝危险 SQL：SELECT REPEAT('x',1000000)
   ---
-  duration_ms: 4.397
+  duration_ms: 4.1641
   type: 'test'
   ...
 # Subtest: 允许别名、连接、聚合和单条末尾分号
 ok 11 - 允许别名、连接、聚合和单条末尾分号
   ---
-  duration_ms: 3.9228
+  duration_ms: 4.7429
   type: 'test'
   ...
 # Subtest: 类型必须与题目一致
 ok 12 - 类型必须与题目一致
   ---
-  duration_ms: 0.4649
+  duration_ms: 0.5507
   type: 'test'
   ...
 # Subtest: 字符串中的邮箱、注释符号和关键字不被误判
 ok 13 - 字符串中的邮箱、注释符号和关键字不被误判
   ---
-  duration_ms: 1.2148
+  duration_ms: 1.631
   type: 'test'
   ...
 # Subtest: 比较保留重复行，无序题忽略顺序，有序题保留顺序
 ok 14 - 比较保留重复行，无序题忽略顺序，有序题保留顺序
   ---
-  duration_ms: 0.6747
+  duration_ms: 1.2455
   type: 'test'
   ...
 # Subtest: 查询格式化包含子句换行且保持 SQL 语义
 ok 15 - 查询格式化包含子句换行且保持 SQL 语义
   ---
-  duration_ms: 75.3642
+  duration_ms: 66.4263
   type: 'test'
   ...
 # Subtest: 建表答案使用多行缩进且保留约束和字符串
 ok 16 - 建表答案使用多行缩进且保留约束和字符串
   ---
-  duration_ms: 15.3957
+  duration_ms: 13.8149
   type: 'test'
   ...
 # Subtest: 格式化幂等，未完成语句与空答案保留原文
 ok 17 - 格式化幂等，未完成语句与空答案保留原文
   ---
-  duration_ms: 1.4585
+  duration_ms: 1.3362
   type: 'test'
   ...
 1..17
@@ -113,4 +113,4 @@ ok 17 - 格式化幂等，未完成语句与空答案保留原文
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 872.3725
+# duration_ms 959.6383

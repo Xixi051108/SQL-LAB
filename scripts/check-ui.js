@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { query, pool } from "../server/db.js";
 import { seedQuestions } from "../server/fixtures.js";
-let browser;
+let browser, rosterNumber;
 const userIds = [],
   examIds = [],
   qids = [];
@@ -22,12 +22,13 @@ try {
     path: "output/playwright/login.png",
     fullPage: true,
   });
-  await page.getByLabel("用户名", { exact: true }).fill("teacher");
+  await page.getByLabel("学号/工号", { exact: true }).fill("T2026001");
   await page
     .getByLabel("密码", { exact: true })
     .fill(process.env.TEACHER_PASSWORD || "Teacher123!");
   await page.getByRole("button", { name: "进入工作台" }).click();
   await page.getByRole("heading", { name: "从一道好题开始。" }).waitFor();
+  assert.equal(await page.locator(".user-panel strong").textContent(), "陈明");
   await page.getByText("业务数据库", { exact: true }).waitFor();
   await page.screenshot({
     path: "output/playwright/overview.png",
@@ -104,14 +105,29 @@ try {
   student.on("pageerror", (e) => errors.push(e.message));
   await student.goto("http://127.0.0.1:3000");
   await student.getByRole("button", { name: "立即注册" }).click();
-  const username = "ui_" + Date.now();
-  await student.getByLabel("用户名", { exact: true }).fill(username);
+  const username = "UI_" + Date.now();
+  rosterNumber = username;
+  await page.getByRole("link", { name: "师生名册", exact: true }).click();
+  await page.getByRole("button", { name: "录入人员", exact: true }).click();
+  await page.getByLabel("学号/工号", { exact: true }).fill(username);
+  await page.getByLabel("姓名", { exact: true }).fill("验收同学");
+  await page.getByRole("button", { name: "保存", exact: true }).click();
+  await page.getByRole("row").filter({ hasText: username }).waitFor();
+  await page.screenshot({
+    path: "output/playwright/roster.png",
+    fullPage: true,
+  });
+  await student.getByLabel("学号/工号", { exact: true }).fill(username);
   await student.getByLabel("姓名", { exact: true }).fill("验收同学");
   await student.getByLabel("密码", { exact: true }).fill("UiPass123!");
   await student.getByRole("button", { name: "注册并进入" }).click();
   await student
     .getByRole("heading", { name: "今天，检验你的 SQL 能力。" })
     .waitFor();
+  assert.equal(
+    await student.locator(".user-panel strong").textContent(),
+    "验收同学",
+  );
   const [u] = await query("SELECT id FROM users WHERE username=?", [username]);
   userIds.push(u.id);
   await student
@@ -200,5 +216,7 @@ try {
   }
   for (const id of qids) await query("DELETE FROM questions WHERE id=?", [id]);
   for (const id of userIds) await query("DELETE FROM users WHERE id=?", [id]);
+  if (rosterNumber)
+    await query("DELETE FROM roster WHERE number=?", [rosterNumber]);
   await pool.end();
 }

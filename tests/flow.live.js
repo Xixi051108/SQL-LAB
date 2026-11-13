@@ -11,7 +11,8 @@ import { expireAttempts, processQueue, recoverQueue } from "../server/exams.js";
 let server, base;
 const users = [],
   examIds = [],
-  questionIds = [];
+  questionIds = [],
+  rosterNumbers = [];
 const wrong = [
   "SELECT * FROM students",
   "INSERT INTO students VALUES(100,'新同学','软件工程',21)",
@@ -39,6 +40,8 @@ test.after(async () => {
   for (const id of questionIds)
     await query("DELETE FROM questions WHERE id=?", [id]);
   for (const id of users) await query("DELETE FROM users WHERE id=?", [id]);
+  for (const number of rosterNumbers)
+    await query("DELETE FROM roster WHERE number=?", [number]);
   await new Promise((r) => server.close(r));
   await pool.end();
 });
@@ -59,8 +62,17 @@ function client() {
   };
 }
 async function register(c) {
-  const username =
-    "test_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+  const username = (
+    "TEST_" +
+    Date.now() +
+    "_" +
+    Math.random().toString(36).slice(2, 6)
+  ).toUpperCase();
+  await query(
+    "INSERT INTO roster(number,name,role) VALUES(?,'测试学生','student')",
+    [username],
+  );
+  rosterNumbers.push(username);
   const r = await c("/auth/register", "POST", {
     username,
     name: "测试学生",
@@ -75,7 +87,7 @@ async function teacher() {
   assert.equal(
     (
       await c("/auth/login", "POST", {
-        username: "teacher",
+        username: "T2026001",
         password: process.env.TEACHER_PASSWORD || "Teacher123!",
       })
     ).status,
@@ -151,8 +163,11 @@ test("每次判题恢复初始环境", async () => {
   );
 });
 test("格式化后的查询与建表答案保持判题结果", async () => {
-  for (const question of [seedQuestions[0],seedQuestions[4]]) {
-    assert.equal((await grade(question,formatSQL(question.reference_sql))).verdict,"correct");
+  for (const question of [seedQuestions[0], seedQuestions[4]]) {
+    assert.equal(
+      (await grade(question, formatSQL(question.reference_sql))).verdict,
+      "correct",
+    );
   }
 });
 test("改表支持修改/删除列、增删主外键与唯一约束", async () => {
@@ -336,19 +351,29 @@ test("DeepSeek 不可用时，已发布考试仍可提交并计分", async () =>
   const previous = config.deepseek.key;
   config.deepseek.key = "";
   try {
-    const t = await teacher(), a = client();
-    assert.equal((await t("/questions/generate", "POST", { type: "select" })).status, 503);
+    const t = await teacher(),
+      a = client();
+    assert.equal(
+      (await t("/questions/generate", "POST", { type: "select" })).status,
+      503,
+    );
     await register(a);
-    const q = (await t("/questions")).data.find(x => x.type === "select" && x.status === "approved");
+    const q = (await t("/questions")).data.find(
+      (x) => x.type === "select" && x.status === "approved",
+    );
     const eid = await makeExam(t, [q]);
     const aid = (await a(`/exams/${eid}/start`, "POST", {})).data.id;
     const eq = (await a(`/attempts/${aid}`)).data.questions[0];
-    await a(`/attempts/${aid}/submit`, "POST", { answers: [{ question_id: eq.id, sql: q.reference_sql }] });
+    await a(`/attempts/${aid}/submit`, "POST", {
+      answers: [{ question_id: eq.id, sql: q.reference_sql }],
+    });
     await processQueue();
     const result = await a(`/attempts/${aid}`);
     assert.equal(result.data.status, "graded");
     assert.equal(result.data.score, 10);
-  } finally { config.deepseek.key = previous; }
+  } finally {
+    config.deepseek.key = previous;
+  }
 });
 test("判题异常保留空成绩，教师可重试；恢复函数找回中断任务", async () => {
   const t = await teacher(),

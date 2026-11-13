@@ -47,8 +47,22 @@ export class MySQLSessionStore extends session.Store {
       .catch(callback);
   }
 }
-export function loggedIn(req, res, next) {
+export async function loggedIn(req, res, next) {
   if (!req.session.user) return res.status(401).json({ error: "请先登录" });
+  const [user] = await query(
+    "SELECT u.id,u.username,r.name,r.role,r.enabled FROM users u JOIN roster r ON r.number=u.username WHERE u.id=?",
+    [req.session.user.id],
+  );
+  if (!user || !user.enabled) {
+    req.session.destroy(() => {});
+    return res.status(401).json({ error: "账号已停用或不存在，请联系教师" });
+  }
+  req.session.user = {
+    id: user.id,
+    username: user.username,
+    name: user.name,
+    role: user.role,
+  };
   next();
 }
 export function teacher(req, res, next) {

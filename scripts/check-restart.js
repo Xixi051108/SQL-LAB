@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import assert from "node:assert/strict";
 import { once } from "node:events";
 import { query, pool } from "../server/db.js";
-let child, userId;
+let child, userId, rosterNumber;
 const exams = [];
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
 async function start() {
@@ -53,11 +53,16 @@ try {
   const t = client(),
     s = client();
   await t("/auth/login", "POST", {
-    username: "teacher",
+    username: "T2026001",
     password: process.env.TEACHER_PASSWORD || "Teacher123!",
   });
+  rosterNumber = "RESTART_" + Date.now();
+  await query(
+    "INSERT INTO roster(number,name,role) VALUES(?,'恢复测试','student')",
+    [rosterNumber],
+  );
   const u = await s("/auth/register", "POST", {
-    username: "restart_" + Date.now(),
+    username: rosterNumber,
     name: "恢复测试",
     password: "Restart123!",
   });
@@ -123,5 +128,7 @@ try {
     await query("DELETE FROM exams WHERE id=?", [id]);
   }
   if (userId) await query("DELETE FROM users WHERE id=?", [userId]);
+  if (rosterNumber)
+    await query("DELETE FROM roster WHERE number=?", [rosterNumber]);
   await pool.end();
 }
